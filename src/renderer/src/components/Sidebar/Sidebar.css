@@ -1,0 +1,170 @@
+/* macOS-style Sidebar with Vibrancy */
+.sidebar {
+  width: var(--sidebar-width);
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  padding: 44px 0 12px;
+  background: var(--bg-sidebar);
+  backdrop-filter: var(--glass-blur);
+  border-right: 1px solid var(--border-subtle);
+  flex-shrink: 0;
+  z-index: 100;
+}
+.sidebar-top, .sidebar-bottom {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+.sidebar-apps {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  max-height: calc(100vh - 340px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 2px 0;
+  scrollbar-width: none;
+}
+.sidebar-apps::-webkit-scrollbar { display: none; }
+
+.sidebar-btn {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  border-radius: var(--r-md);
+  transition: all var(--t-normal);
+  position: relative;
+  font-size: 14px;
+}
+.sidebar-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-primary);
+}
+.sidebar-btn:active {
+  transform: scale(0.92);
+}
+
+/* macOS-style active pill indicator */
+.sidebar-btn.active {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-primary);
+}
+.sidebar-btn.active::before {
+  content: '';
+  position: absolute;
+  left: -8px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 16px;
+  border-radius: 0 4px 4px 0;
+  background: var(--accent-blue);
+  transition: all var(--t-smooth);
+}
+
+.sidebar-logo {
+  width: 42px;
+  height: 42px;
+  margin-bottom: 8px;
+}
+.logo-img {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+}
+
+.sidebar-app-wrapper {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.sidebar-app {
+  position: relative;
+}
+.sidebar-app .app-icon {
+  font-size: 20px;
+  line-height: 1;
+}
+.sidebar-app.active {
+  background: color-mix(in srgb, var(--app-color) 12%, transparent);
+}
+.sidebar-app.active::before {
+  background: var(--app-color);
+}
+.tab-dot {
+  position: absolute;
+  bottom: 3px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--app-color);
+  opacity: 0.8;
+}
+
+.sidebar-app-add-instance {
+  position: absolute;
+  right: 6px;
+  top: 0px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0;
+  transform: scale(0.8);
+  transition: all var(--t-fast);
+  z-index: 10;
+}
+.sidebar-app-wrapper:hover .sidebar-app-add-instance {
+  opacity: 1;
+  transform: scale(1);
+}
+.sidebar-app-add-instance:hover {
+  background: var(--accent-blue);
+  border-color: var(--accent-blue);
+}
+
+
+.sidebar-add {
+  color: var(--text-disabled);
+  border: 1.5px dashed rgba(255, 255, 255, 0.12);
+  width: 36px;
+  height: 36px;
+  margin-top: 6px;
+  border-radius: var(--r-md);
+}
+.sidebar-add:hover {
+  border-color: var(--accent-blue);
+  color: var(--accent-blue);
+  background: var(--accent-blue-dim);
+  border-style: solid;
+}
+
+.sidebar-divider {
+  width: 24px;
+  height: 1px;
+  background: var(--border-subtle);
+  margin: 8px 0;
+}

@@ -1,0 +1,93 @@
+/* macOS-style Tab Bar */
+.tabbar {
+  height: var(--tabbar-height);
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: stretch;
+  flex-shrink: 0;
+  padding: 0 8px;
+}
+.tabbar-scroll {
+  display: flex;
+  overflow-x: auto;
+  overflow-y: hidden;
+  gap: 1px;
+  flex: 1;
+  scrollbar-width: none;
+}
+.tabbar-scroll::-webkit-scrollbar { display: none; }
+
+.tab-item {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 0 14px;
+  min-width: 100px;
+  max-width: 180px;
+  cursor: pointer;
+  color: var(--text-tertiary);
+  font-size: 12px;
+  font-weight: 500;
+  transition: all var(--t-fast);
+  position: relative;
+  background: transparent;
+  flex-shrink: 0;
+  border-right: 1px solid var(--border-subtle);
+}
+.tab-item:last-child { border-right: none; }
+.tab-item:hover {
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-secondary);
+}
+.tab-item.active {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
+/* macOS-style subtle bottom line */
+.tab-item.active::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--bg-primary);
+}
+.tab-icon { font-size: 13px; flex-shrink: 0; }
+.tab-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+}
+.tab-loading {
+  width: 10px;
+  height: 10px;
+  border: 1.5px solid rgba(255,255,255,0.1);
+  border-top-color: var(--accent-blue);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+.tab-close {
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: none;
+  color: var(--text-disabled);
+  cursor: pointer;
+  border-radius: var(--r-full);
+  opacity: 0;
+  transition: all var(--t-fast);
+  flex-shrink: 0;
+}
+.tab-item:hover .tab-close { opacity: 0.7; }
+.tab-close:hover {
+  opacity: 1 !important;
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-primary);
+}

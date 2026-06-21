@@ -1,0 +1,12 @@
+node_modules/
+dist/
+out/
+*.log
+.DS_Store
+# scratch / one-off helper files from early exploration
+check-electron.js
+find-ext.js
+fix-path.js
+get-chrome-key.ps1
+test-ports.js
+test-read*.js

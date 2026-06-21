@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "composite": true,
+    "target": "ES2022",
+    "lib": ["ES2022"],
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "outDir": "./out",
+    "rootDir": ".",
+    "skipLibCheck": true,
+    "types": ["electron-vite/node"]
+  },
+  "include": [
+    "electron.vite.config.*",
+    "src/main/**/*",
+    "src/preload/**/*"
+  ]
+}

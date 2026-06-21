@@ -1,0 +1,72 @@
+/* macOS-style Titlebar */
+.titlebar {
+  height: var(--titlebar-height);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-subtle);
+  flex-shrink: 0;
+}
+
+/* Centered title like macOS */
+.titlebar-center {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.titlebar-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-tertiary);
+  letter-spacing: 0.2px;
+}
+.titlebar-spacer {
+  width: 60px;
+}
+
+/* Traffic Light Buttons */
+.traffic-lights {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding: 0 4px;
+}
+.tl-btn {
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 120ms ease;
+  color: transparent;
+  position: relative;
+}
+.tl-close { background: #ff5f57; }
+.tl-minimize { background: #febc2e; }
+.tl-maximize { background: #28c840; }
+
+/* Show icons on hover (macOS behavior) */
+.traffic-lights:hover .tl-btn {
+  color: rgba(0, 0, 0, 0.55);
+}
+.tl-btn:hover {
+  filter: brightness(1.1);
+}
+.tl-btn:active {
+  filter: brightness(0.85);
+  transform: scale(0.9);
+}
+
+/* Unfocused state — dimmed circles */
+.titlebar:not(:hover) .tl-btn {
+  background: var(--text-disabled);
+  color: transparent;
+}
+.titlebar:hover .tl-close { background: #ff5f57; }
+.titlebar:hover .tl-minimize { background: #febc2e; }
+.titlebar:hover .tl-maximize { background: #28c840; }

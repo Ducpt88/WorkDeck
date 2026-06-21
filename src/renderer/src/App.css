@@ -1,0 +1,22 @@
+.app-layout {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  background: var(--bg-primary);
+}
+
+.main-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.content-area {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  background: var(--bg-primary);
+}

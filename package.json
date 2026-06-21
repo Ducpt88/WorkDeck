@@ -1,0 +1,43 @@
+{
+  "name": "workdeck",
+  "version": "1.0.0",
+  "description": "Unified Workspace Hub - All your AI tools and apps in one place",
+  "main": "./out/main/index.js",
+  "author": "WorkDeck",
+  "scripts": {
+    "dev": "electron-vite dev",
+    "build": "electron-vite build",
+    "preview": "electron-vite preview",
+    "postinstall": "electron-builder install-app-deps"
+  },
+  "dependencies": {
+    "@electron-toolkit/preload": "^3.0.1",
+    "@electron-toolkit/utils": "^3.0.0",
+    "zustand": "^5.0.5"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.3.4",
+    "electron": "^35.7.5",
+    "electron-builder": "^25.1.8",
+    "electron-vite": "^2.3.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "typescript": "^5.7.2",
+    "vite": "^5.4.11"
+  },
+  "build": {
+    "appId": "com.workdeck.app",
+    "productName": "WorkDeck",
+    "win": {
+      "target": [
+        "nsis"
+      ],
+      "icon": "resources/icon.png"
+    },
+    "directories": {
+      "output": "dist"
+    }
+  }
+}
