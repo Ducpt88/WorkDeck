@@ -1,6 +1,6 @@
 {
   "name": "workdeck",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Unified Workspace Hub - All your AI tools and apps in one place",
   "main": "./out/main/index.js",
   "author": "WorkDeck",
