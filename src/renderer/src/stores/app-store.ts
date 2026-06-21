@@ -2,10 +2,12 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { AppConfig, Tab, Task, Note, ViewType } from '../../../shared/types'
 
+// All apps open as web tabs inside WorkDeck (one unified window). Each tab uses a
+// persistent, isolated session, so you sign in once per app and it's remembered.
 const DEFAULT_APPS: AppConfig[] = [
-  { id: 'codex', name: 'Codex (OpenAI)', url: 'https://chatgpt.com', icon: '🤖', color: '#10b981', category: 'ai-coding', native: true },
-  { id: 'claude', name: 'Claude', url: 'https://claude.ai', icon: '🟠', color: '#f59e0b', category: 'ai-coding', native: true },
-  { id: 'antigravity', name: 'Antigravity (Gemini)', url: 'https://gemini.google.com', icon: '🌌', color: '#8b5cf6', category: 'ai-coding', native: true },
+  { id: 'codex', name: 'Codex (OpenAI)', url: 'https://chatgpt.com', icon: '🤖', color: '#10b981', category: 'ai-coding' },
+  { id: 'claude', name: 'Claude', url: 'https://claude.ai', icon: '🟠', color: '#f59e0b', category: 'ai-coding' },
+  { id: 'antigravity', name: 'Antigravity (Gemini)', url: 'https://gemini.google.com', icon: '🌌', color: '#8b5cf6', category: 'ai-coding' },
   { id: 'github', name: 'GitHub', url: 'https://github.com', icon: '🐙', color: '#ffffff', category: 'dev-tools' }
 ]
 
