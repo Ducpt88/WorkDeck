@@ -2,12 +2,13 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { AppConfig, Tab, Task, Note, ViewType } from '../../../shared/types'
 
-// All apps open as web tabs inside WorkDeck (one unified window). Each tab uses a
-// persistent, isolated session, so you sign in once per app and it's remembered.
+// AI apps launch the REAL installed desktop app (already logged in, full history /
+// real IDE), so they open as their own window — smooth, correct content. GitHub has
+// no desktop app, so it stays a web tab inside WorkDeck.
 const DEFAULT_APPS: AppConfig[] = [
-  { id: 'codex', name: 'Codex (OpenAI)', url: 'https://chatgpt.com', icon: '🤖', color: '#10b981', category: 'ai-coding' },
-  { id: 'claude', name: 'Claude', url: 'https://claude.ai', icon: '🟠', color: '#f59e0b', category: 'ai-coding' },
-  { id: 'antigravity', name: 'Antigravity (Gemini)', url: 'https://gemini.google.com', icon: '🌌', color: '#8b5cf6', category: 'ai-coding' },
+  { id: 'claude', name: 'Claude', url: 'https://claude.ai', icon: '🟠', color: '#f59e0b', category: 'ai-coding', native: true },
+  { id: 'codex', name: 'Codex', url: 'https://chatgpt.com', icon: '🤖', color: '#10b981', category: 'ai-coding', native: true },
+  { id: 'antigravity', name: 'Antigravity', url: 'https://gemini.google.com', icon: '🌌', color: '#8b5cf6', category: 'ai-coding', native: true },
   { id: 'github', name: 'GitHub', url: 'https://github.com', icon: '🐙', color: '#ffffff', category: 'dev-tools' }
 ]
 
