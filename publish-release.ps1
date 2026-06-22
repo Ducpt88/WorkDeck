@@ -10,9 +10,11 @@ Set-Location $PSScriptRoot
 
 Write-Host "==> Cập nhật version trong package.json -> $Version"
 $pkgPath = Join-Path $PSScriptRoot 'package.json'
-$pkg = Get-Content $pkgPath -Raw | ConvertFrom-Json
-$pkg.version = $Version
-($pkg | ConvertTo-Json -Depth 20) | Set-Content $pkgPath -Encoding utf8
+# Chỉ thay giá trị version, giữ nguyên định dạng, ghi UTF-8 KHÔNG BOM
+# (Set-Content -Encoding utf8 trên PS 5.1 thêm BOM làm hỏng JSON).
+$content = Get-Content $pkgPath -Raw
+$content = [regex]::Replace($content, '("version"\s*:\s*")[^"]*(")', "`${1}$Version`${2}", 1)
+[System.IO.File]::WriteAllText($pkgPath, $content, (New-Object System.Text.UTF8Encoding $false))
 
 Write-Host "==> Build"
 npm run build
