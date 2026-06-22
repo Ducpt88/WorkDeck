@@ -38,14 +38,6 @@ export default function Dashboard({ onAddApp }: DashboardProps): JSX.Element {
           <p className="dash-subtitle">Your unified workspace — all tools in one place</p>
         </div>
         <div className="dash-stats">
-          <div className="stat-card">
-            <span className="stat-value">{tabs.length}</span>
-            <span className="stat-label">Active Tabs</span>
-          </div>
-          <div className="stat-card">
-            <span className="stat-value">{apps.length}</span>
-            <span className="stat-label">Apps</span>
-          </div>
           <div className="stat-card stat-todo">
             <span className="stat-value">{todoCount}</span>
             <span className="stat-label">To Do</span>

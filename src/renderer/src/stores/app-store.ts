@@ -2,15 +2,10 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { AppConfig, Tab, Task, Note, ViewType } from '../../../shared/types'
 
-// AI apps launch the REAL installed desktop app (already logged in, full history /
-// real IDE), so they open as their own window — smooth, correct content. GitHub has
-// no desktop app, so it stays a web tab inside WorkDeck.
-const DEFAULT_APPS: AppConfig[] = [
-  { id: 'claude', name: 'Claude', url: 'https://claude.ai', icon: '🟠', color: '#f59e0b', category: 'ai-coding', native: true },
-  { id: 'codex', name: 'Codex', url: 'https://chatgpt.com', icon: '🤖', color: '#10b981', category: 'ai-coding', native: true },
-  { id: 'antigravity', name: 'Antigravity', url: 'https://gemini.google.com', icon: '🌌', color: '#8b5cf6', category: 'ai-coding', native: true },
-  { id: 'github', name: 'GitHub', url: 'https://github.com', icon: '🐙', color: '#ffffff', category: 'dev-tools' }
-]
+// WorkDeck is a focused productivity hub: Task board, Quick Notes, Pomodoro.
+// It no longer bundles the AI apps (those are best used as their own native apps).
+// Users can still add their own web apps via "Add App" if they want.
+const DEFAULT_APPS: AppConfig[] = []
 
 interface AppStore {
   currentView: ViewType
@@ -175,10 +170,15 @@ export const useAppStore = create<AppStore>()(
           state.tabs = state.tabs.map((t) => ({ ...t, isLoading: false }))
         }
       },
-      version: 2,
+      version: 3,
       migrate: (persistedState: any, version: number) => {
         if (version < 2 && persistedState.apps) {
           delete persistedState.apps
+        }
+        // v3: WorkDeck no longer opens app tabs — drop any stale persisted tabs.
+        if (version < 3) {
+          delete persistedState.tabs
+          delete persistedState.activeTabId
         }
         return persistedState
       }
