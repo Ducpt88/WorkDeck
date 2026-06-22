@@ -20,6 +20,15 @@ const api = {
     version: () => ipcRenderer.invoke('app:version'),
     check: () => ipcRenderer.invoke('update:check'),
     install: (url: string) => ipcRenderer.invoke('update:install', url)
+  },
+  embed: {
+    attach: (appId: string, bounds: { x: number; y: number; width: number; height: number }) =>
+      ipcRenderer.invoke('embed:attach', { appId, bounds }),
+    setBounds: (appId: string, bounds: { x: number; y: number; width: number; height: number }) =>
+      ipcRenderer.invoke('embed:set-bounds', { appId, bounds }),
+    setVisible: (appId: string, visible: boolean) =>
+      ipcRenderer.invoke('embed:set-visible', { appId, visible }),
+    detach: (appId: string) => ipcRenderer.invoke('embed:detach', { appId })
   }
 }
 

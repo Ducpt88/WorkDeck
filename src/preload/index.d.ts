@@ -22,6 +22,12 @@ declare global {
         check: () => Promise<{ ok: boolean; hasUpdate?: boolean; latest?: string; current?: string; url?: string; notes?: string; note?: string; error?: string }>
         install: (url: string) => Promise<{ ok: boolean; error?: string }>
       }
+      embed: {
+        attach: (appId: string, bounds: { x: number; y: number; width: number; height: number }) => Promise<{ success: boolean; found: boolean; error?: string }>
+        setBounds: (appId: string, bounds: { x: number; y: number; width: number; height: number }) => Promise<boolean>
+        setVisible: (appId: string, visible: boolean) => Promise<boolean>
+        detach: (appId: string) => Promise<boolean>
+      }
     }
   }
 }

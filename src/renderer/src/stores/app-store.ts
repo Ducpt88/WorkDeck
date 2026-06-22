@@ -2,10 +2,12 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { AppConfig, Tab, Task, Note, ViewType } from '../../../shared/types'
 
-// WorkDeck is a focused productivity hub: Task board, Quick Notes, Pomodoro.
-// It no longer bundles the AI apps (those are best used as their own native apps).
-// Users can still add their own web apps via "Add App" if they want.
-const DEFAULT_APPS: AppConfig[] = []
+// Claude opens the REAL Claude desktop app (Claude Code: open working folder, files,
+// full session history) — these exist ONLY in the desktop app, not claude.ai web.
+// It opens as its own window (the only way those features work).
+const DEFAULT_APPS: AppConfig[] = [
+  { id: 'claude', name: 'Claude', url: 'https://claude.ai', icon: '🟠', color: '#f59e0b', category: 'ai-coding', native: true }
+]
 
 interface AppStore {
   currentView: ViewType
@@ -66,19 +68,9 @@ export const useAppStore = create<AppStore>()(
 
       tabs: [],
       activeTabId: null,
-      // Entry point for clicking an app. Native apps launch as their own desktop
-      // window (full native speed, already logged in); web apps open as a tab.
-      openApp: (appId) => {
-        const app = get().apps.find((a) => a.id === appId)
-        if (app?.native && window.api?.launchNative) {
-          window.api.launchNative(appId).then((res) => {
-            // Not installed → fall back to the web view so the button still works.
-            if (!res.success) get().openTab(appId)
-          })
-          return
-        }
-        get().openTab(appId)
-      },
+      // Both native (embedded desktop window) and web apps open as a tab;
+      // WebviewContainer decides how to fill the content area.
+      openApp: (appId) => get().openTab(appId),
       openTab: (appId, forceNew = false) => {
         const state = get()
         if (!forceNew) {

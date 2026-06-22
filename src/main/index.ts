@@ -1,10 +1,11 @@
-import { app, BrowserWindow, ipcMain, session } from 'electron'
+import { app, BrowserWindow, ipcMain, session, screen } from 'electron'
 import { join } from 'path'
 import { tmpdir } from 'os'
 import { promises as fsp } from 'fs'
 import { spawn } from 'child_process'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
+import * as winEmbed from './win-embed'
 
 // GitHub repo that hosts WorkDeck releases (for the in-app updater).
 const UPDATE_REPO = 'Ducpt88/WorkDeck'
@@ -131,6 +132,99 @@ ipcMain.handle('window:isMaximized', () => mainWindow?.isMaximized() ?? false)
 // Launch a native desktop app (reuses its existing login). Returns success/error
 // so the renderer can fall back to the web view if the app isn't installed.
 ipcMain.handle('app:launch-native', (_, appId: string) => launchNativeApp(appId))
+
+// ---- Native window embedding (show the real app inside a WorkDeck tab) ------
+// Executable that owns each app's window — matched by process so a browser tab
+// titled "Claude" isn't mistaken for the app.
+const EMBED_EXE: Record<string, string> = {
+  claude: 'claude.exe',
+  codex: 'codex.exe',
+  antigravity: 'antigravity.exe'
+}
+const embedded = new Map<string, number>()
+const sleep = (ms: number): Promise<void> => new Promise((r) => setTimeout(r, ms))
+
+// Renderer CSS-pixel rect (relative to window client) → physical pixels for Win32.
+function toPhysical(b: { x: number; y: number; width: number; height: number }): { x: number; y: number; w: number; h: number } {
+  const sf = mainWindow ? screen.getDisplayNearestPoint(mainWindow.getBounds()).scaleFactor : 1
+  return { x: b.x * sf, y: b.y * sf, w: b.width * sf, h: b.height * sf }
+}
+function parentHwnd(): number | null {
+  if (!mainWindow) return null
+  return Number(mainWindow.getNativeWindowHandle().readBigUInt64LE(0))
+}
+function liveEmbed(appId: string): number | null {
+  const h = embedded.get(appId)
+  if (h == null) return null
+  if (!winEmbed.isWindow(h)) {
+    embedded.delete(appId)
+    return null
+  }
+  return h
+}
+
+async function attachEmbed(
+  appId: string,
+  bounds: { x: number; y: number; width: number; height: number }
+): Promise<{ success: boolean; found: boolean; error?: string }> {
+  const parent = parentHwnd()
+  if (!parent) return { success: false, found: false, error: 'No parent window' }
+  const exe = EMBED_EXE[appId]
+  if (!exe) return { success: false, found: false, error: `No embed config for ${appId}` }
+
+  const existing = embedded.get(appId)
+  if (existing != null) {
+    if (winEmbed.isWindow(existing)) {
+      const p = toPhysical(bounds)
+      winEmbed.setBounds(existing, p.x, p.y, p.w, p.h)
+      winEmbed.setVisible(existing, true)
+      return { success: true, found: true }
+    }
+    embedded.delete(appId)
+  }
+
+  // Fast path: app already running → embed now. Slow path: launch + poll briefly.
+  const before = winEmbed.findWindowsByExe(exe)
+  let target: number | null = before.find((w) => w.title)?.hwnd ?? null
+  if (target === null) {
+    const beforeSet = new Set(before.map((w) => w.hwnd))
+    launchNativeApp(appId)
+    for (let i = 0; i < 32 && target === null; i++) {
+      await sleep(250)
+      const now = winEmbed.findWindowsByExe(exe)
+      const fresh = now.find((w) => !beforeSet.has(w.hwnd) && w.title)
+      if (fresh) target = fresh.hwnd
+      else if (i >= 8 && now.length > 0) target = now[0].hwnd
+    }
+  }
+  if (target === null) return { success: true, found: false }
+
+  const p = toPhysical(bounds)
+  winEmbed.embed(target, parent, p.x, p.y, p.w, p.h)
+  embedded.set(appId, target)
+  return { success: true, found: true }
+}
+
+ipcMain.handle('embed:attach', (_, { appId, bounds }) => attachEmbed(appId, bounds))
+ipcMain.handle('embed:set-bounds', (_, { appId, bounds }) => {
+  const h = liveEmbed(appId)
+  if (h == null) return false
+  const p = toPhysical(bounds)
+  winEmbed.setBounds(h, p.x, p.y, p.w, p.h)
+  return true
+})
+ipcMain.handle('embed:set-visible', (_, { appId, visible }) => {
+  const h = liveEmbed(appId)
+  if (h == null) return false
+  winEmbed.setVisible(h, visible)
+  return true
+})
+ipcMain.handle('embed:detach', (_, { appId }) => {
+  const h = liveEmbed(appId)
+  if (h != null) winEmbed.detach(h)
+  embedded.delete(appId)
+  return true
+})
 
 // ---- In-app updater (GitHub Releases) -------------------------------------
 ipcMain.handle('app:version', () => app.getVersion())
@@ -322,6 +416,13 @@ app.whenReady().then(async () => {
     optimizer.watchWindowShortcuts(window)
   })
   createWindow()
+})
+
+// Release embedded windows back to standalone windows on quit, so closing WorkDeck
+// doesn't kill the user's Claude session.
+app.on('before-quit', () => {
+  for (const hwnd of embedded.values()) winEmbed.release(hwnd)
+  embedded.clear()
 })
 
 app.on('window-all-closed', () => {
